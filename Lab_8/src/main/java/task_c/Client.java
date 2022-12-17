@@ -1,0 +1,47 @@
+package task_c;
+
+import task_b.CarProducer;
+import task_b.Management;
+import task_b.Mark;
+
+import java.rmi.Naming;
+import java.util.ArrayList;
+
+public class Client {
+    public Client(){
+        StartClientSending();
+    }
+    private void StartClientSending() {
+        Mark mark = new Mark("mark1");
+        Mark mark2 = new Mark("mark2");
+        Mark mark3 = new Mark("mark3");
+        ArrayList<Mark> marks = new ArrayList<>();
+        ArrayList<Mark> marks2 = new ArrayList<>();
+        marks.add(mark);
+        marks.add(mark2);
+
+        marks2.add(mark);
+        marks2.add(mark2);
+
+        task_b.CarProducer producer = new task_b.CarProducer("producer1", marks);
+        task_b.CarProducer producer2 = new CarProducer("producer2", marks);
+
+        try {
+            String url = "//localhost:123/Management";
+            Management management = (Management) Naming.lookup(url);
+            System.out.println("RMI object found");
+            management.AddProducer(producer);
+            management.AddProducer(producer2);
+            management.PrintAllProducers();
+            management.AddMarkToProducer(producer2.name, mark3);
+            management.RemoveMarkFromProducer(producer2.name, mark);
+            management.ChangeMarkFromProducer(producer2.name, mark2, "newName");
+            management.PrintAllProducers();
+            management.CalculateMarksCountFromProducer(producer.name);
+            management.PrintAllMarks();
+            management.PrintAllMarksFromProducers(producer.name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
